@@ -188,3 +188,95 @@
 	(mapcan (lambda (x) (loop for i from 1 to n collect x)) lx))
 
 (repli '(a b c) 3)
+
+(defun drop (lx n &optional (now 0))
+	"16."
+	(when lx
+		(let
+				((listus-novus (cdr lx)))
+			(if (equal now (pred n))
+					(drop listus-novus n 0)
+					(cons (car lx) (drop listus-novus n (succ now)))))))
+
+(drop '(a b c d e f g h i k) 3)
+
+(defun split (lx n &optional (acc nil))
+	"17."
+	(when lx
+		(if (= n 0)
+				(list (reverse acc) lx)
+				(split (cdr lx) (pred n) (cons (car lx) acc)))))
+(split '(a b c d e f g h i k) 3)
+
+(defun take (n lx)
+	(when lx
+		(if (= n 0)
+				nil
+				(cons (car lx) (take (pred n) (cdr lx))))))
+
+(defun slice (lx start end)
+	"18."
+	(when lx
+		(if (= start 0)
+				(take end lx)
+				(slice (cdr lx) (pred start) (pred end)))))
+
+(slice '(a b c d e f g h i k) 2 7)
+
+
+(defun rotate (lx n)
+	"19."
+	(let
+			((splittin (if (>= n 0) (split lx n) (split lx (+ (length lx) n)))))
+		(apply #'append (reverse splittin))))
+
+(rotate '(a b c d e f g h) 3)
+(rotate '(a b c d e f g h) -2)
+
+
+(defun remove-at (lx n)
+	"20."
+	(when lx
+		(if (= n 0)
+				(cdr lx)
+				(cons (car lx) (remove-at  (cdr lx) (pred n))))))
+(remove-at '(a b c d) 2)
+
+
+
+(defun insert-at (sym lx n)
+	"21."
+	(when lx
+		(if (= n 0)
+				(cons sym lx)
+				(cons (car lx) (insert-at sym (cdr lx) (pred n))))))
+
+(insert-at 'alfa '(a b c d) 2)
+
+
+(defun range (start end)
+	"22."
+	(loop for x from start to end collect x))
+(range 4 9)
+
+(defun rnd-select (lx n)
+	"23."
+	(when lx
+		(if (= n 0)
+				nil
+				(let
+						((idx (random (length lx))))
+					(cons (elt lx idx) (rnd-select (remove-at lx idx) (pred n)))))))
+(rnd-select '(a b c d e f g h) 3)
+
+(defun lotto-select (amount end)
+	"24."
+	(rnd-select (range 1 end) amount))
+
+(lotto-select 6 49)
+
+(defun rnd-permu (lx)
+	"25."
+	(rnd-select lx (length lx)))
+
+(rnd-permu '(a b c d e f))
